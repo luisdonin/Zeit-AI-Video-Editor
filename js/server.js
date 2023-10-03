@@ -6,7 +6,7 @@ const ytdl = require('ytdl-core')
 const port = 3000
 
 app.get('/', (req, res) => {
-  res.sendFile(__dirname + '/index.html')
+  res.sendFile('index.html', {'root': __dirname + '/../html/'})
 });
 
 app.get('/download', (req,res) => {
