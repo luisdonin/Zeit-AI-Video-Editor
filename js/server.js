@@ -2,8 +2,13 @@ const express = require('express')
 const app = express()
 const hostname = "localhost"
 const cors = require('cors')
+const path = require('path')
 const ytdl = require('ytdl-core')
 const port = 3000
+
+app.use('/bootstrap/css/', express.static(path.join(__dirname, '/../assets/bootstrap/css/')));
+app.use('/css/',express.static(path.join(__dirname, '/../assets/css/')));
+app.use('/img/',express.static(path.join(__dirname, '/../assets/img/')));
 
 app.get('/', (req, res) => {
   res.sendFile('index.html', {'root': __dirname + '/../html/'})
@@ -18,21 +23,3 @@ app.get('/download', (req,res) => {
 app.listen(port, () => {
   console.log(`Example app listening at http://${hostname}:${port}`)
 });
-
-
-
-
-// const http = require('node:http');
-
-// const hostname = '127.0.0.1';
-// const port = 3000;
-
-// const server = http.createServer((req, res) => {
-//   res.statusCode = 200;
-//   res.setHeader('Content-Type', 'text/plain');
-//   res.end('Hello, World!\n');
-// });
-
-// server.listen(port, hostname, () => {
-//   console.log(`Server running at http://${hostname}:${port}/`);
-// }); 
