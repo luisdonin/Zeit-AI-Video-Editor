@@ -5,6 +5,9 @@ from sys import argv
 def main():
     interval = float(argv[2])
     input_file = str(argv[1])
+    trim_video(input_file, interval)
+
+def trim_video(input_file, interval):
     infos = ffmpeg.probe(input_file, 'ffprobe')
     video_duration = float(infos['format']['duration'])
     number_of_cuts = math.ceil(video_duration/interval)
