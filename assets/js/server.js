@@ -81,10 +81,10 @@ app.get('/download', (req,res) => {
     	    	.videoCodec('libx264')
     	    	.audioCodec('aac')
     	    	.on('end', () => {
-    	    	  console.log(`Finished merging audio and video, saved to '${mergedFilePath}'`);
+    	    		console.log(`Finished merging audio and video, saved to '${mergedFilePath}'`);
     	    	})
     	    	.on('error', (err) => {
-    	    	  console.error(err);
+    	    		console.error(err);
     	    	})
     	    	.run();
     	};	
@@ -96,9 +96,9 @@ app.get('/download', (req,res) => {
     	console.error(err);
     });
 
-  res.header('Content-Disposition', `attachment; filename="video.mp4"`);
+  	res.header('Content-Disposition', `attachment; filename="video.mp4"`);
 });
 
 app.listen(port, () => {
-  console.log(`Example app listening at http://${hostname}:${port}`)
+  	console.log(`Example app listening at http://${hostname}:${port}`)
 });
