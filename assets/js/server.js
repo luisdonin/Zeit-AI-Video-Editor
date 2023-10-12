@@ -21,9 +21,17 @@ app.get('/', (req, res) => {res.sendFile('index.html', {'root': __dirname + '/..
 app.get('/download', (req,res) => {
   const videoURL = req.query.URL;
   const videoFormat = "mp4";
+  const videoQuality = "1080p"
+
+  ytdl.getInfo(videoURL).then(info => {
+    fs.writeFile('./infos.txt', info.format.qualityLabel, (err) => {
+      if (err) throw err;
+      console.log('The file has been saved!');
+    });
+  });
 
   res.header('Content-Disposition', `attachment; filename="video.${videoFormat}"`);
-  const videoStream = ytdl(videoURL, { format: videoFormat });
+  const videoStream = ytdl(videoURL, { format: videoFormat, quality: videoQuality });
   const videoFilePath = "../../videos/inputs/video.mp4";
 
   videoStream.pipe(fs.createWriteStream(videoFilePath));
@@ -31,7 +39,7 @@ app.get('/download', (req,res) => {
   videoStream.on('end', () => {
     console.log("Download finished");
     console.log("Saved to ${videoFilePath}");
-  });    
+  });
 });
 
 app.listen(port, () => {
