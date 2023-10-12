@@ -100,5 +100,5 @@ app.get('/download', (req,res) => {
 });
 
 app.listen(port, () => {
-  	console.log(`Example app listening at http://${hostname}:${port}`)
+  	console.log(`Server listening at http://${hostname}:${port}`)
 });
