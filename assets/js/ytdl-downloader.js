@@ -2,6 +2,10 @@ var convertBtn = document.querySelector('.convert-button');
 var URLinput = document.querySelector('.URL-input');
 
 convertBtn.addEventListener('click', () => {
+    if (URLinput.value == ''){
+        alert("Please paste a YouTube URL");
+        return;
+    }
     console.log(`URL : ${URLinput.value}`);
     sendURL(URLinput.value);
 });

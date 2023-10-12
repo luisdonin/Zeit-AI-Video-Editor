@@ -1,10 +1,12 @@
 const express = require('express')
 const app = express()
-const hostname = "localhost"
 const cors = require('cors')
 const path = require('path')
 const ytdl = require('ytdl-core')
+const fs = require('fs')
+
 const port = 3000
+const hostname = "localhost"
 
 app.use('/bootstrap/css/', express.static(path.join(__dirname, '/../bootstrap/css/')));
 app.use('/css/',express.static(path.join(__dirname, '/../css/')));
@@ -17,8 +19,19 @@ app.get('/', (req, res) => {res.sendFile('index.html', {'root': __dirname + '/..
 });
 
 app.get('/download', (req,res) => {
-  var URL = req.query.URL;
-  res.json({url: URL});
+  const videoURL = req.query.URL;
+  const videoFormat = "mp4";
+
+  res.header('Content-Disposition', `attachment; filename="video.${videoFormat}"`);
+  const videoStream = ytdl(videoURL, { format: videoFormat });
+  const videoFilePath = "../../videos/inputs/video.mp4";
+
+  videoStream.pipe(fs.createWriteStream(videoFilePath));
+
+  videoStream.on('end', () => {
+    console.log("Download finished");
+    console.log("Saved to ${videoFilePath}");
+  });    
 });
 
 app.listen(port, () => {
