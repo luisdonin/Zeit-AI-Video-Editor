@@ -59,7 +59,7 @@ module.exports =
                         const mergeAudioAndVideo = () => {
                                     console.log("Merging audio and video.....")
                                 ffmpeg()
-                                        .input(audioFilePath)
+                                    .input(audioFilePath)
                                     .input(videoFilePath)
                                     .output(mergedFilePath)
                                     .videoCodec('libx264')
@@ -87,17 +87,17 @@ module.exports =
                         };	
                     
                         videoStream.on('error', (err) => {
-                                throw err;
                                 reject(err);
+                                throw err;
                         });
             
                         audioStream.on('error', (err) => {
-                                throw err;
                                 reject(err);
+                                throw err;
                         });
                 }).catch(err => {
-                        throw err;
                         reject(err);
+                        throw err;
                 })
         });
 }
