@@ -9,9 +9,10 @@ module.exports =
                 ytdl.getInfo(videoURL).then(info => {
                         // gets all the available formats up to 1080p
                         savePath = savePath.split(" ").join("_");
-                        const videoFilePath = savePath + info.videoDetails.title + "_video." + videoFormatPredefined;
-                        const audioFilePath = savePath + info.videoDetails.title + "_audio." + audioFormatPredefined;
-                        const mergedFilePath = savePath + info.videoDetails.title + ".mp4";
+                        videoTitle = info.videoDetails.title.split(" ").join("_");
+                        const videoFilePath = savePath + videoTitle + "_video." + videoFormatPredefined;
+                        const audioFilePath = savePath + videoTitle + "_audio." + audioFormatPredefined;
+                        const mergedFilePath = savePath + videoTitle + ".mp4";
 
                         const videoFormats = info.formats.filter(format => 
                                     format.hasVideo && 
@@ -48,7 +49,10 @@ module.exports =
                         }).on('progress', (chunkLength, downloaded, total) => {
                                 const percent = 100 * downloaded / total;
                                 console.log(`Downloading audio: ${percent.toFixed(2)}% downloaded `);
-                        });
+                        }).on('error', (err) => {
+                                reject(err);
+                                throw err;
+                        });;
             
                         videoStream.on('end', () => {
                                 console.log("Video download finished");
@@ -60,6 +64,9 @@ module.exports =
                         }).on('progress', (chunkLength, downloaded, total) => {
                                 const percent = 100 * downloaded / total;
                                 console.log(`Downloading video: ${percent.toFixed(2)}% downloaded `);
+                        }).on('error', (err) => {
+                                reject(err);
+                                throw err;
                         });
             
                         const mergeAudioAndVideo = () => {
