@@ -1,6 +1,7 @@
 const ytdl = require('ytdl-core')
 const fs = require('fs')
-const ffmpeg = require('fluent-ffmpeg')
+const ffmpeg = require('fluent-ffmpeg');
+const { cursorTo } = require('readline');
 
 module.exports = 
 {
@@ -71,7 +72,7 @@ module.exports =
                                     .videoCodec('libx264')
                                     .audioCodec('aac')
                                     .on('progress', (progress) => {
-                                            console.log(`Processing: ${progress.percent}% done`);
+                                            console.log(`Processing: ${progress.percent.toFixed(2)}% done`);
                                     })
                                     .on('end', () => {
                                             console.log(`Finished merging audio and video, saved to '${mergedFilePath}'`);
