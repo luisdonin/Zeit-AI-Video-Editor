@@ -9,9 +9,9 @@ module.exports =
                 ytdl.getInfo(videoURL).then(info => {
                         // gets all the available formats up to 1080p
                         savePath = savePath.split(" ").join("_");
-                        const videoFilePath = savePath + info.videoDetails.title + "." + videoFormatPredefined;
-                        const audioFilePath = savePath + info.videoDetails.title + "." + audioFormatPredefined;
-                        const mergedFilePath = savePath + info.videoDetails.title + "_merged.mp4";
+                        const videoFilePath = savePath + info.videoDetails.title + "_video." + videoFormatPredefined;
+                        const audioFilePath = savePath + info.videoDetails.title + "_audio." + audioFormatPredefined;
+                        const mergedFilePath = savePath + info.videoDetails.title + ".mp4";
 
                         const videoFormats = info.formats.filter(format => 
                                     format.hasVideo && 
@@ -45,6 +45,9 @@ module.exports =
                                 if (finishedStreams === 2) {
                                         mergeAudioAndVideo();
                                 }
+                        }).on('progress', (chunkLength, downloaded, total) => {
+                                const percent = 100 * downloaded / total;
+                                console.log(`Downloading audio: ${percent.toFixed(2)}% downloaded `);
                         });
             
                         videoStream.on('end', () => {
@@ -54,6 +57,9 @@ module.exports =
                                 if (finishedStreams === 2) {
                                         mergeAudioAndVideo();
                                 }
+                        }).on('progress', (chunkLength, downloaded, total) => {
+                                const percent = 100 * downloaded / total;
+                                console.log(`Downloading video: ${percent.toFixed(2)}% downloaded `);
                         });
             
                         const mergeAudioAndVideo = () => {
@@ -64,6 +70,9 @@ module.exports =
                                     .output(mergedFilePath)
                                     .videoCodec('libx264')
                                     .audioCodec('aac')
+                                    .on('progress', (progress) => {
+                                            console.log(`Processing: ${progress.percent}% done`);
+                                    })
                                     .on('end', () => {
                                             console.log(`Finished merging audio and video, saved to '${mergedFilePath}'`);
                                             fs.unlink(audioFilePath, (err) => {
