@@ -19,6 +19,7 @@ app.get('/', (req, res) => {
 
 app.get('/download', async (req,res) => {
 	const videoURL = req.query.URL;
+	const cutDuration = req.query.Duration;
 	const videoFormatPredefined = "mp4";
 	const audioFormatPredefined = "mp3";
 	const savePath = "../../videos/inputs/";
