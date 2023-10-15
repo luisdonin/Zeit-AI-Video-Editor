@@ -1,8 +1,3 @@
-const server_settings = {
-    hostname: 'localhost',
-    port: 3000
-}
-
 var convertBtn = document.querySelector('.convert-button');
 var URLinput = document.querySelector('.URL-input');
 
@@ -17,5 +12,6 @@ convertBtn.addEventListener('click', () => {
 
 function sendURL(URL) {
     console.log(`Sending URL to server: ${URL}`);
-    window.location.href = `http://${server_settings.hostname}:${server_settings.port}/download?URL=${URL}`;
+    console.log(`http://${window.location.hostname}:${window.location.port}/download?URL=${URL}`)
+    window.location.href = `http://${window.location.hostname}:${window.location.port}/download?URL=${URL}`;
 }
