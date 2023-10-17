@@ -5,6 +5,7 @@ const app = express()
 const cors = require('cors')
 const path = require('path')
 const fs = require('fs')
+const ffmpeg = require('fluent-ffmpeg');
 
 app.use('/bootstrap/css/', express.static(path.join(__dirname, '/../bootstrap/css/')));
 app.use('/css/',express.static(path.join(__dirname, '/../css/')));
@@ -28,17 +29,68 @@ app.get('/download', async (req,res) => {
 
 	try {
 		const {videoTitle, mergedFilePath} = await downloader.downloadVideo(videoURL, savePath, videoFormatPredefined, audioFormatPredefined);
-		console.log("Sending video.....");
-		console.log(mergedFilePath)
-		console.log(videoTitle)
-		res.download(mergedFilePath, videoTitle + '.mp4', (err) => {
-			if(err === undefined){
-				console.log("Video sent successfully");
+		console.log("Cutting video.....");
+		console.log(mergedFilePath);
+		console.log(videoTitle);
+
+		ffmpeg.ffprobe(mergedFilePath, (err, metadata) => {
+			if(err === null)
+			{
+				const duracaoDoVideo = metadata.format.duration;
+
+				const amountOfCuts = Math.ceil(duracaoDoVideo / cutDuration);
+
+				fs.mkdirSync(mergedFilePath + "_cuts", (err) => {
+					if(err === undefined){
+						console.log("Folder created successfully");
+					} else {
+						console.log("Error creating folder");
+						console.log(err);
+					}
+				});
+
+				for (let i = 0; i < amountOfCuts; i++) {
+					let startTime = i * cutDuration;
+					let endTime = (i + 1) * cutDuration;
+
+					if(endTime > duracaoDoVideo){
+						endTime = duracaoDoVideo;
+					}
+
+					const cutFilePath = mergedFilePath + "_cuts/" + videoTitle + "_cut_" + i + ".mp4";
+
+					ffmpeg(mergedFilePath)
+						.setStartTime(startTime)
+						.setDuration(endTime - startTime)
+						.output(cutFilePath)
+						.on('end', () => {
+							console.log("Cut finished");
+							console.log(`Saved to '${cutFilePath}'`);
+						})
+						.on('error', (err) => {
+							console.log("Error cutting video");
+							console.log(err);
+						})
+						.run()
+						.then(() => {
+							console.log(`Sending video ${i} to client`)
+							res.download(mergedFilePath, videoTitle + '.mp4', (err) => {
+								if(err === undefined){
+									console.log("Video sent successfully");
+								} else {
+									console.log("Error sending video");
+									console.log(err);
+								}
+							});
+						});
+				}
 			} else {
-				console.log("Error sending video");
+				console.log("Error reading video information");
 				console.log(err);
 			}
 		});
+		
+		
 	} catch (err) {
 		console.error(err);
 		res.status(500).send(err.message);
