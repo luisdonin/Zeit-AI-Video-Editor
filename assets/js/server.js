@@ -66,13 +66,6 @@ app.get('/download', async (req,res) => {
 						.on('end', () => {
 							console.log("Cut finished");
 							console.log(`Saved to '${cutFilePath}'`);
-						})
-						.on('error', (err) => {
-							console.log("Error cutting video");
-							console.log(err);
-						})
-						.run()
-						.then(() => {
 							console.log(`Sending video ${i} to client`)
 							res.download(mergedFilePath, videoTitle + '.mp4', (err) => {
 								if(err === undefined){
@@ -82,7 +75,12 @@ app.get('/download', async (req,res) => {
 									console.log(err);
 								}
 							});
-						});
+						})
+						.on('error', (err) => {
+							console.log("Error cutting video");
+							console.log(err);
+						})
+						.run();
 				}
 			} else {
 				console.log("Error reading video information");
