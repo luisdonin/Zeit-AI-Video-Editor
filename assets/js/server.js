@@ -25,63 +25,129 @@ app.set('view engine', 'ejs');
 
 // Serve static files from the public directory
 app.use(express.static(path.join(__dirname, '../../public')));
-app.get('/', (req, res) => {res.sendFile('index.html', {'root': __dirname + '/../../pages/'})});
+app.get('/', (req, res) => {res.sendFile('index.html', {'root': __dirname + '/../../'})});
 
 // Serve the index.html file when the user navigates to the root URL
 
 
 // Serve the about.html file when the user navigates to the /about URL
 app.get('/about', (req, res) => {
-    res.sendFile('about.html', {'root': __dirname + '/../../pages/'});
+    res.sendFile('about.html', {'root': __dirname + '/../../'});
 });
 
 app.get('/index', (req, res) => {
-    res.sendFile('index.html', {'root': __dirname + '/../../pages/'});
+    res.sendFile('index.html', {'root': __dirname + '/../../'});
 });
 
 // Serve the contact.html file when the user navigates to the /contact URL
 app.get('/contact', (req, res) => {
-    res.sendFile('contact.html', {'root': __dirname + '/../../pages/'});
+    res.sendFile('contact.html', {'root': __dirname + '/../../'});
 });
 
 // Serve the integrations.html file when the user navigates to the /integrations URL
 app.get('/integrations', (req, res) => {
-    res.sendFile('integrations.html', {'root': __dirname + '/../../pages/'});
+    res.sendFile('integrations.html', {'root': __dirname + '/../../'});
 });
 
 // Serve the pricing.html file when the user navigates to the /pricing URL
 app.get('/pricing', (req, res) => {
-    res.sendFile('pricing.html', {'root': __dirname + '/../../pages/'});
+    res.sendFile('pricing.html', {'root': __dirname + '/../../'});
 });
 
 // Serve the contacts.html file when the user navigates to the /contacts URL
 app.get('/contacts', (req, res) => {
-    res.sendFile('contacts.html', {'root': __dirname + '/../../pages/'});
+    res.sendFile('contacts.html', {'root': __dirname + '/../../'});
 });
 
 // Serve the login.html file when the user navigates to the /login URL
 app.get('/login', (req, res) => {
-    res.sendFile('login.html', {'root': __dirname + '/../../pages/'});
+    res.sendFile('login.html', {'root': __dirname + '/../../'});
 });
 
 // Serve the signup.html file when the user navigates to the /signup URL
 app.get('/signup', (req, res) => {
-    res.sendFile('signup.html', {'root': __dirname + '/../../pages/'});
+    res.sendFile('signup.html', {'root': __dirname + '/../../'});
 });
 
 
 
-app.get('/download', (req,res) => {
+app.get('/download', async (req,res) => {
 	const videoURL = req.query.URL;
+	const cutDuration = req.query.Duration;
 	const videoFormatPredefined = "mp4";
 	const audioFormatPredefined = "mp3";
-	const audioFilePath = "../../videos/inputs/audio.mp3";
-	const videoFilePath = "../../videos/inputs/video.mp4";
-	const mergedFilePath = "../../videos/inputs/merged.mp4";
+	const savePath = "../../videos/inputs/";
 
-	downloader.downloadVideo(videoURL, videoFilePath, audioFilePath, mergedFilePath, videoFormatPredefined, audioFormatPredefined);
+	console.log("Donwloading video.....");
 
-  	res.header('Content-Disposition', `attachment; filename="video.mp4"`);
+	try {
+		const {videoTitle, mergedFilePath} = await downloader.downloadVideo(videoURL, savePath, videoFormatPredefined, audioFormatPredefined);
+		console.log("Cutting video.....");
+		console.log(mergedFilePath);
+		console.log(videoTitle);
+
+		ffmpeg.ffprobe(mergedFilePath, (err, metadata) => {
+			if(err === null)
+			{
+				const duracaoDoVideo = metadata.format.duration;
+
+				const amountOfCuts = Math.ceil(duracaoDoVideo / cutDuration);
+
+				fs.mkdirSync(mergedFilePath + "_cuts", (err) => {
+					if(err === undefined){
+						console.log("Folder created successfully");
+					} else {
+						console.log("Error creating folder");
+						console.log(err);
+					}
+				});
+
+				for (let i = 0; i < amountOfCuts; i++) {
+					let startTime = i * cutDuration;
+					let endTime = (i + 1) * cutDuration;
+
+					if(endTime > duracaoDoVideo){
+						endTime = duracaoDoVideo;
+					}
+
+					const cutFilePath = mergedFilePath + "_cuts/" + videoTitle + "_cut_" + i + ".mp4";
+
+					ffmpeg(mergedFilePath)
+						.setStartTime(startTime)
+						.setDuration(endTime - startTime)
+						.output(cutFilePath)
+						.on('end', () => {
+							console.log("Cut finished");
+							console.log(`Saved to '${cutFilePath}'`);
+						})
+						.on('error', (err) => {
+							console.log("Error cutting video");
+							console.log(err);
+						})
+						.run()
+						.then(() => {
+							console.log(`Sending video ${i} to client`)
+							res.download(mergedFilePath, videoTitle + '.mp4', (err) => {
+								if(err === undefined){
+									console.log("Video sent successfully");
+								} else {
+									console.log("Error sending video");
+									console.log(err);
+								}
+							});
+						});
+				}
+			} else {
+				console.log("Error reading video information");
+				console.log(err);
+			}
+		});
+		
+		
+	} catch (err) {
+		console.error(err);
+		res.status(500).send(err.message);
+	}
 });
 
 
