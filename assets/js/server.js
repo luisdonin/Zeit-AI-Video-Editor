@@ -38,6 +38,8 @@ app.get('/download', async (req,res) => {
 			{
 				const duracaoDoVideo = metadata.format.duration;
 
+				let cutsDone = 0;
+
 				const amountOfCuts = Math.ceil(duracaoDoVideo / cutDuration);
 
 				fs.mkdirSync(mergedFilePath + "_cuts", (err) => {
@@ -67,14 +69,34 @@ app.get('/download', async (req,res) => {
 							console.log("Cut finished");
 							console.log(`Saved to '${cutFilePath}'`);
 							console.log(`Sending video ${i} to client`)
-							res.download(mergedFilePath, videoTitle + '.mp4', (err) => {
-								if(err === undefined){
-									console.log("Video sent successfully");
-								} else {
-									console.log("Error sending video");
-									console.log(err);
+							
+							res.write(`Content-Disposition: attachment; filename="${videoTitle}_cut_${i}.mp4"`);
+
+							const cutFileStream = fs.createReadStream(cutFilePath);
+							
+							cutFileStream.pipe(res, {end: false});
+
+							cutFileStream.on('end', () => {
+								console.log(`Video ${i} sent successfully`);
+								cutsDone++;
+								if(cutsDone === amountOfCuts - 1){
+									res.end();
 								}
 							});
+
+							cutFileStream.on('error', (err) => {
+								console.log("Error sending video");
+								console.log(err);
+							});
+
+							// res.download(mergedFilePath, videoTitle + '.mp4', (err) => {
+							// 	if(err === undefined){
+							// 		console.log("Video sent successfully");
+							// 	} else {
+							// 		console.log("Error sending video");
+							// 		console.log(err);
+							// 	}
+							// });
 						})
 						.on('error', (err) => {
 							console.log("Error cutting video");

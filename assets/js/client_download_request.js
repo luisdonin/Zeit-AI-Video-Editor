@@ -13,6 +13,5 @@ convertBtn.addEventListener('click', () => {
 
 function sendURL(URL, cutDur) {
     console.log(`Sending URL to server: ${URL}`);
-    //console.log(`http://${window.location.hostname}:${window.location.port}/download?URL=${URL}`)
     window.location.href = `http://${window.location.hostname}:${window.location.port}/download?URL=${URL}&Duration=${cutDur}`;
 }
