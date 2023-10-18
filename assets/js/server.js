@@ -1,4 +1,5 @@
 const downloader = require('./server_downloader.js');
+const server_settings = require('./common.js');
 const express = require('express')
 const app = express()
 const cors = require('cors')
@@ -119,13 +120,6 @@ app.get('/download', async (req,res) => {
 						.on('end', () => {
 							console.log("Cut finished");
 							console.log(`Saved to '${cutFilePath}'`);
-						})
-						.on('error', (err) => {
-							console.log("Error cutting video");
-							console.log(err);
-						})
-						.run()
-						.then(() => {
 							console.log(`Sending video ${i} to client`)
 							res.download(mergedFilePath, videoTitle + '.mp4', (err) => {
 								if(err === undefined){
@@ -135,7 +129,12 @@ app.get('/download', async (req,res) => {
 									console.log(err);
 								}
 							});
-						});
+						})
+						.on('error', (err) => {
+							console.log("Error cutting video");
+							console.log(err);
+						})
+						.run();
 				}
 			} else {
 				console.log("Error reading video information");
@@ -152,8 +151,6 @@ app.get('/download', async (req,res) => {
 
 
 
-app.listen(port, () => {
-  	console.log(`Server listening at http://${hostname}:${port}`)
+app.listen(server_settings.port, () => {
+  	console.log(`Server listening at http://${server_settings.hostname}:${server_settings.port}`)
 });
-
- 

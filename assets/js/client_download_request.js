@@ -1,5 +1,6 @@
 var convertBtn = document.querySelector('.convert-button');
 var URLinput = document.querySelector('.URL-input');
+var cutDuration = document.querySelector('.cut-duration');
 
 convertBtn.addEventListener('click', () => {
     if (URLinput.value == ''){
@@ -7,12 +8,11 @@ convertBtn.addEventListener('click', () => {
         return;
     }
     console.log(`URL : ${URLinput.value}`);
-    sendURL(URLinput.value);
+    sendURL(URLinput.value, cutDuration.value);
 });
 
-function sendURL(URL) {
-    fetch(`http://localhost:3000/download?URL=${URL}`, {
-        method: 'GET'
-    }).then(res => res.json())
-    .then(json => console.log(json));
+function sendURL(URL, cutDur) {
+    console.log(`Sending URL to server: ${URL}`);
+    //console.log(`http://${window.location.hostname}:${window.location.port}/download?URL=${URL}`)
+    window.location.href = `http://${window.location.hostname}:${window.location.port}/download?URL=${URL}&Duration=${cutDur}`;
 }
