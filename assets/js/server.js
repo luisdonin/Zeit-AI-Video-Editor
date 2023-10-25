@@ -1,12 +1,13 @@
-const downloader = require('./server_downloader.js');
 const server_settings = require('./common.js');
+const downloader = require('./server_downloader.js');
 const express = require('express')
 const app = express()
 const cors = require('cors')
 const path = require('path')
+const fs = require('fs')
+const ffmpeg = require('fluent-ffmpeg');
 
-const port = 3000
-const hostname = "localhost"
+
 
 
 app.use('/bootstrap/css/', express.static(path.join(__dirname, '/../bootstrap/css/')));
