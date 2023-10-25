@@ -1,0 +1,30 @@
+{
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "fluent-ffmpeg": "^2.1.2",
+    "ytdl-core": "^4.11.5"
+  },
+  "scripts": {
+    "start": "node server.js"
+  },
+  "name": "zeit---ai-video-editor",
+  "description": "This repository contains the code for an AI-powered video editing tool. The tool uses machine learning to analyze long videos and create short, engaging clips.",
+  "version": "1.0.0",
+  "main": "server.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/luisdonin/Zeit---AI-Video-Editor.git"
+  },
+  "keywords": [
+    "zeit",
+    "video",
+    "editor"
+  ],
+  "author": "José Luis Donin, Lucas Samuel Zanchet",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/luisdonin/Zeit---AI-Video-Editor/issues"
+  },
+  "homepage": "https://github.com/luisdonin/Zeit---AI-Video-Editor#readme"
+}
