@@ -6,5 +6,5 @@ This repository contains the code for an AI-powered video editing tool. The tool
 
 - **Front-End**:Bootstrap Studio
 - **Back-End**: Node.js
--
+
 
