@@ -27,7 +27,8 @@ app.get('/download', async (req,res) => {
 
 	console.log("Donwloading video.....");
 
-	try {
+	// downloads the video and audio and merges them
+	try { 
 		const {videoTitle, mergedFilePath} = await downloader.downloadVideo(videoURL, savePath, videoFormatPredefined, audioFormatPredefined);
 		console.log("Cutting video.....");
 		console.log(mergedFilePath);
@@ -38,18 +39,21 @@ app.get('/download', async (req,res) => {
 			{
 				const duracaoDoVideo = metadata.format.duration;
 
-				let cutsDone = 0;
+				let cutsSent = 0;
 
 				const amountOfCuts = Math.ceil(duracaoDoVideo / cutDuration);
 
-				fs.mkdirSync(mergedFilePath + "_cuts", (err) => {
-					if(err === undefined){
-						console.log("Folder created successfully");
-					} else {
-						console.log("Error creating folder");
-						console.log(err);
-					}
-				});
+				if(!fs.existsSync(mergedFilePath + "_cuts"))
+				{
+					fs.mkdirSync(mergedFilePath + "_cuts", (err) => {
+						if(err === undefined){
+							console.log("Folder created successfully");
+						} else {
+							console.log("Error creating folder");
+							console.log(err);
+						}
+					});
+				}
 
 				for (let i = 0; i < amountOfCuts; i++) {
 					let startTime = i * cutDuration;
@@ -70,7 +74,8 @@ app.get('/download', async (req,res) => {
 							console.log(`Saved to '${cutFilePath}'`);
 							console.log(`Sending video ${i} to client`)
 							
-							res.write(`Content-Disposition: attachment; filename="${videoTitle}_cut_${i}.mp4"`);
+							res.setHeader(`Content-Type`, `video/mp4`);
+							res.setHeader(`Content-Disposition`, `attachment; filename="${videoTitle}_cut_${i}.mp4"`);
 
 							const cutFileStream = fs.createReadStream(cutFilePath);
 							
@@ -78,8 +83,8 @@ app.get('/download', async (req,res) => {
 
 							cutFileStream.on('end', () => {
 								console.log(`Video ${i} sent successfully`);
-								cutsDone++;
-								if(cutsDone === amountOfCuts - 1){
+								cutsSent++;
+								if(cutsSent === amountOfCuts){
 									res.end();
 								}
 							});
