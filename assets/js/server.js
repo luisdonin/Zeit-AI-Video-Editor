@@ -10,6 +10,8 @@ const ffmpeg = require('fluent-ffmpeg');
 
 
 
+
+
 app.use('/bootstrap/css/', express.static(path.join(__dirname, '/../bootstrap/css/')));
 app.use('/css/',express.static(path.join(__dirname, '/../css/')));
 app.use('/img/',express.static(path.join(__dirname, '/../img/')));
@@ -71,7 +73,7 @@ app.get('/dashboard', (req, res) => {
     res.sendFile('dashboard.html', {'root': __dirname + '/../../'});
 });
 
-
+let videos = [];
 
 app.get('/download', async (req,res) => {
 	const videoURL = req.query.URL;
@@ -122,6 +124,7 @@ app.get('/download', async (req,res) => {
 							console.log("Cut finished");
 							console.log(`Saved to '${cutFilePath}'`);
 							console.log(`Sending video ${i} to client`)
+						//	video.push(cutFilePath)
 							res.download(mergedFilePath, videoTitle + '.mp4', (err) => {
 								if(err === undefined){
 									console.log("Video sent successfully");
@@ -150,8 +153,11 @@ app.get('/download', async (req,res) => {
 	}
 });
 
-
-
+/*app.get('/dashboard', (req, res) =>{
+	 // Send the video paths to the client
+	res.json(videos)
+})
+*/
 app.listen(server_settings.port, () => {
   	console.log(`Server listening at http://${server_settings.hostname}:${server_settings.port}`)
 });
