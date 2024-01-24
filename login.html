@@ -86,7 +86,7 @@
             .then(response => {
                 if (response.ok) {
                     // Redirect to the home page or dashboard
-                    window.location.href = '/';
+                    window.location.href = 'http://localhost:50000/dashboard';
                 } else {
                     // Handle error response
                     console.error('Error:', response.statusText);
@@ -100,7 +100,7 @@
         // Initialize the Google Sign-In API
         gapi.load('auth2', function() {
             gapi.auth2.init({
-                client_id: 'YOUR_CLIENT_ID'
+                client_id: '782814918535-qrjhvrbipesrl7in4ioj3f467bpflkts.apps.googleusercontent.com'
             });
         });
 
