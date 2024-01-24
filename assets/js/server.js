@@ -67,8 +67,8 @@ app.get('/login', (req, res) => {
 });
 
 // Serve the signup.html file when the user navigates to the /signup URL
-app.get('/signup', (req, res) => {
-    res.sendFile('signup.html', {'root': __dirname + '/../../'});
+app.get('/dashboard', (req, res) => {
+    res.sendFile('dashboard.html', {'root': __dirname + '/../../'});
 });
 
 
