@@ -108,6 +108,10 @@
         var googleSignInButton = document.getElementById('google-signin-button');
         googleSignInButton.addEventListener('click', function() {
             gapi.auth2.getAuthInstance().signIn().then(onSignIn);
+            
+        });
+        gapi.auth2.getAuthInstance().signIn().then(onSignIn).catch(function(error) {
+            console.log('Sign-in error', error); // Should log any sign-in errors
         });
     </script>
 </body>

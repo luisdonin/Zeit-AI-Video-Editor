@@ -6,10 +6,15 @@ const cors = require('cors')
 const path = require('path')
 const fs = require('fs')
 const ffmpeg = require('fluent-ffmpeg');
+const router = express.Router();
 
 
+router.get('/auth/google/callback', function(req, res){
+	res.redirect('http://localhost:50000/dashboard')
+})
 
 
+app.use(router)
 
 
 app.use('/bootstrap/css/', express.static(path.join(__dirname, '/../bootstrap/css/')));
