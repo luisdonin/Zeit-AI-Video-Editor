@@ -9,6 +9,6 @@ It then saves the cut versions of the video in a folder ready to be used.
 
 ## Next steps
 Our goal is to implement an AI that analyses the videos and extracts relevant information from it, such as context, transcript, title; and then generates titles and descriptions for the shorter versions according to the context. 
-
-![Index](images/zeitIndex.png)
 ![Login](images/login.png)
+![Index](images/zeitIndex.png)
+
